@@ -1,6 +1,6 @@
 // Create a map object
 var myMap = L.map("map", {
-  center: [28, -100],
+  center: [28.5994, -105.6731],
   zoom: 5
 });
 
@@ -63,17 +63,17 @@ var overlays = {
 
 L.control.layers(baseMaps, overlays,{collapsed:false}).addTo(myMap);
 
-function fillColor(depth) {
+function fillColor(magnitude) {
   switch (true) {
-  case depth > 90:
+  case magnitude > 5:
     return "#ea2c2c";
-  case depth > 70:
+  case magnitude > 4:
     return "#ea822c";
-  case depth > 50:
+  case magnitude > 3:
     return "#ee9c00";
-  case depth > 30:
+  case magnitude > 2:
     return "#eecc00";
-  case depth > 10:
+  case magnitude > 1:
     return "#d4ee00";
   default:
     return "#98ee00";
@@ -90,13 +90,14 @@ d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/
 });
 
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(data=>{
-  // console.log(data)
+  console.log(data)
+  console.log(data.features.geometry)
 
     L.geoJson(data, {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
           radius: feature.properties.mag * 5,
-          fillColor: fillColor(feature.geometry.coordinates[2]),
+          fillColor: fillColor(feature.properties.mag),
           color: '#000000',
           fillOpacity: 1,
           weight: 0.6 
@@ -104,8 +105,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       },
 
       onEachFeature: function(feature, layer) {
-        layer.bindPopup("<strong>Date:</strong> "+ (new Date(feature.properties.time))
-        .toLocaleString("en-US", {month: "long"}+{day: "numeric"}+{year: "numeric"})+"<br><strong>Location:</strong> " + feature.properties.place + "<hr>Magnitude: " + feature.properties.mag +"<br>Depth: " + feature.geometry.coordinates[2]);
+        layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
       }
       
     }).addTo(earthquakes);
@@ -122,7 +122,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         .DomUtil
         .create("div", "info legend");
   
-      var grades = [0, 10, 30, 50, 70, 90];
+      var grades = [0, 1, 2, 3, 4, 5];
       var colors = [
         "#98ee00",
         "#d4ee00",
@@ -141,38 +141,8 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   
     legend.addTo(myMap);
 
+  
 });
 
 
-myMap.on('load', function() {
-  myMap.addSource('clusters', {
-    type: "geojson",
-    data: {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [19,-112]
-          }
-        }]
-      }
-    }
-  );
 
-  myMap.addLayer({
-    "id": "clusters-label",
-    "type": "symbol",
-    "source": "clusters",
-    "layout": {
-      "text-field": "{museum_count}",
-      "text-font": [
-        "DIN Offc Pro Medium",
-        "Arial Unicode MS Bold"
-      ],
-      "text-size": 150
-    }
-  });
-
-});
