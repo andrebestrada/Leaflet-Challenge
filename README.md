@@ -24,6 +24,7 @@ In this step we are going to.
 
 ![](Assets/Earthquakes%20World%20Map.png)
 <hr>
+
 ![](Assets/Earthquakes%20World%20Map%202.png)
 
 
