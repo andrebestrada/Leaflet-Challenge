@@ -6,7 +6,7 @@ The USGS is interested in building a new set of tools that will allow them visua
 
 ## Web App demo (with bonus) ##
 
-![](Assets/World%20Map.gif)
+![](Assets/World%20Map%20New.gif)
 
 ## Goal ##
 ### Basic Visualization ###
