@@ -22,8 +22,8 @@ Include popups that provide additional information about the earthquake when a m
 The USGS wants you to plot a second data set on your map to illustrate the relationship between tectonic plates and seismic activity. You will need to pull in a second data set and visualize it along side your original set of data. Data on tectonic plates can be found at https://github.com/fraxen/tectonicplates.
 In this step we are going to.
 
-![](Assets/Earthquakes World Map.png)
-![](Assets/Earthquakes World Map 2.png)
+![](Assets/Earthquakes%World%Map.png)
+![](Assets/Earthquakes%World%Map%2.png)
 
 
 ### More Data ### 
