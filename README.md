@@ -8,14 +8,13 @@ The USGS is interested in building a new set of tools that will allow them visua
 <img src="Assets/World%20Map%20New.gif" width="100%"/>
 
 
-<img src="Assets/World%20Map%20New%202.gif" width="100%"/>
-<!-- ![](Assets/World%20Map%20New.gif | width=110) -->
-
 ## Goal ##
 ### Basic Visualization ###
 * Get your data set
 Your first task is to visualize an earthquake data set.
 The USGS provides earthquake data in a number of different formats, updated every 5 minutes. Visit the USGS GeoJSON Feed page and pick a data set to visualize. When you click on a data set, for example 'All Earthquakes from the Past 7 Days', you will be given a JSON representation of that data. You will be using the URL of this JSON to pull in the data for our visualization.
+
+<img src="Assets/World%20Map%20New%202.gif" width="100%"/>
 
 * Import & Visualize the Data
 Create a map using Leaflet that plots all of the earthquakes from your data set based on their longitude and latitude.
