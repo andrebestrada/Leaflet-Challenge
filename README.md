@@ -8,7 +8,7 @@ The USGS is interested in building a new set of tools that will allow them visua
 
 ![](Assets/World%20Map.gif)
 
-## Task ##
+## Goal ##
 ### Basic Visualization ###
 * Get your data set
 Your first task is to visualize an earthquake data set.
@@ -23,6 +23,7 @@ The USGS wants you to plot a second data set on your map to illustrate the relat
 In this step we are going to.
 
 ![](Assets/Earthquakes%20World%20Map.png)
+<hr>
 ![](Assets/Earthquakes%20World%20Map%202.png)
 
 
