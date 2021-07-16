@@ -1,3 +1,5 @@
+console.log("Its alive")
+
 // Create a map object
 var myMap = L.map("map", {
   center: [28, -100],
