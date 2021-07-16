@@ -43,11 +43,8 @@ var satellite_map = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}
   accessToken: API_KEY
 });
 
-
 dark_map.addTo(myMap);
 
-
-var tectonicplates = new L.LayerGroup();
 var earthquakes = new L.LayerGroup();
 
 var baseMaps = {
@@ -59,7 +56,6 @@ var baseMaps = {
 
 var overlays = {
   "Earthquakes": earthquakes,
-  "Tectonic Plates": tectonicplates
 };
 
 
@@ -82,14 +78,6 @@ function fillColor(depth) {
   }
 }
 
-d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(data=>{
-  L.geoJson(data,{
-    color: "#007fff",
-    weight: 10
-  }).addTo(tectonicplates)
-
-  tectonicplates.addTo(myMap)
-});
 
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(data=>{
   // console.log(data)
@@ -146,35 +134,42 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
 });
 
 
-myMap.on('load', function() {
-  myMap.addSource('clusters', {
-    type: "geojson",
-    data: {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [19,-112]
-          }
-        }]
+// Create beatiful title WORLD EARTHQUAKES
+var marker = new L.marker([17, -132], { opacity: 0 }); //opacity may be set to zero
+marker.bindTooltip("Earthquakes World map", {permanent: true, noWrap: true,className: 'leaflet-tooltip-1',offset: [0, 0] });
+marker.addTo(myMap);
+var marker = new L.marker([14, -132], { opacity: 0 }); //opacity may be set to zero
+marker.bindTooltip("USGS Last Week Data", {permanent: true, noWrap: true,className: 'leaflet-tooltip-2',offset: [0, 0] });
+marker.addTo(myMap);
+
+
+// Hide titles when zooming out
+var lastZoom;
+myMap.on('zoomend', function() {
+  var zoom = myMap.getZoom();
+
+  console.log(zoom)
+
+  if (zoom < 5 && (!lastZoom || lastZoom >= 5)) {
+    myMap.eachLayer(function(l) {
+      if (l.getTooltip) {
+        var toolTip = l.getTooltip();
+        if (toolTip) {
+          this.myMap.closeTooltip(toolTip);
+        }
       }
-    }
-  );
-
-  myMap.addLayer({
-    "id": "clusters-label",
-    "type": "symbol",
-    "source": "clusters",
-    "layout": {
-      "text-field": "{museum_count}",
-      "text-font": [
-        "DIN Offc Pro Medium",
-        "Arial Unicode MS Bold"
-      ],
-      "text-size": 150
-    }
-  });
-
-});
+    });
+  } else if (zoom >= 5 && (!lastZoom || lastZoom < 5)) {
+    myMap.eachLayer(function(l) {
+      if (l.getTooltip) {
+        var toolTip = l.getTooltip();
+        marker.addTo(myMap);
+        if (toolTip) {
+          this.myMap.addLayer(toolTip);
+          marker.addTo(myMap);
+        }
+      }
+    });
+  }
+  lastZoom = zoom;
+})

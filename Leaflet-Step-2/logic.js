@@ -1,6 +1,8 @@
+console.log("Its alive")
+
 // Create a map object
 var myMap = L.map("map", {
-  center: [28.5994, -105.6731],
+  center: [28, -100],
   zoom: 5
 });
 
@@ -63,17 +65,17 @@ var overlays = {
 
 L.control.layers(baseMaps, overlays,{collapsed:false}).addTo(myMap);
 
-function fillColor(magnitude) {
+function fillColor(depth) {
   switch (true) {
-  case magnitude > 5:
+  case depth > 90:
     return "#ea2c2c";
-  case magnitude > 4:
+  case depth > 70:
     return "#ea822c";
-  case magnitude > 3:
+  case depth > 50:
     return "#ee9c00";
-  case magnitude > 2:
+  case depth > 30:
     return "#eecc00";
-  case magnitude > 1:
+  case depth > 10:
     return "#d4ee00";
   default:
     return "#98ee00";
@@ -90,14 +92,13 @@ d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/
 });
 
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(data=>{
-  console.log(data)
-  console.log(data.features.geometry)
+  // console.log(data)
 
     L.geoJson(data, {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
           radius: feature.properties.mag * 5,
-          fillColor: fillColor(feature.properties.mag),
+          fillColor: fillColor(feature.geometry.coordinates[2]),
           color: '#000000',
           fillOpacity: 1,
           weight: 0.6 
@@ -105,7 +106,8 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       },
 
       onEachFeature: function(feature, layer) {
-        layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+        layer.bindPopup("<strong>Date:</strong> "+ (new Date(feature.properties.time))
+        .toLocaleString("en-US", {month: "long"}+{day: "numeric"}+{year: "numeric"})+"<br><strong>Location:</strong> " + feature.properties.place + "<hr>Magnitude: " + feature.properties.mag +"<br>Depth: " + feature.geometry.coordinates[2]);
       }
       
     }).addTo(earthquakes);
@@ -122,7 +124,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         .DomUtil
         .create("div", "info legend");
   
-      var grades = [0, 1, 2, 3, 4, 5];
+      var grades = [0, 10, 30, 50, 70, 90];
       var colors = [
         "#98ee00",
         "#d4ee00",
@@ -141,8 +143,45 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   
     legend.addTo(myMap);
 
-  
 });
 
 
+// Create beatiful title WORLD EARTHQUAKES
+var marker = new L.marker([17, -132], { opacity: 0 }); //opacity may be set to zero
+marker.bindTooltip("Earthquakes World map", {permanent: true, noWrap: true,className: 'leaflet-tooltip-1',offset: [0, 0] });
+marker.addTo(myMap);
+var marker = new L.marker([14, -132], { opacity: 0 }); //opacity may be set to zero
+marker.bindTooltip("USGS Last Week Data", {permanent: true, noWrap: true,className: 'leaflet-tooltip-2',offset: [0, 0] });
+marker.addTo(myMap);
 
+
+// Hide titles when zooming out
+var lastZoom;
+myMap.on('zoomend', function() {
+  var zoom = myMap.getZoom();
+
+  console.log(zoom)
+
+  if (zoom < 5 && (!lastZoom || lastZoom >= 5)) {
+    myMap.eachLayer(function(l) {
+      if (l.getTooltip) {
+        var toolTip = l.getTooltip();
+        if (toolTip) {
+          this.myMap.closeTooltip(toolTip);
+        }
+      }
+    });
+  } else if (zoom >= 5 && (!lastZoom || lastZoom < 5)) {
+    myMap.eachLayer(function(l) {
+      if (l.getTooltip) {
+        var toolTip = l.getTooltip();
+        marker.addTo(myMap);
+        if (toolTip) {
+          this.myMap.addLayer(toolTip);
+          marker.addTo(myMap);
+        }
+      }
+    });
+  }
+  lastZoom = zoom;
+})
